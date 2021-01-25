@@ -1,4 +1,5 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -14,12 +15,18 @@ public class RedditPics extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update) {
 
-        
+        Message message;
+        SendMessage sendMessage = new SendMessage();
 
         ReplyKeyboardMarkup replyKeyboardMarkup = setKeyboard();
+        sendMessage.setReplyMarkup(replyKeyboardMarkup);
 
         if(update.hasMessage() && update.getMessage().hasText()){
-            message = update.getMessage();
+            String receivedText = update.getMessage().getText();
+            switch (receivedText.toLowerCase()) {
+                case "/start" :
+                    sendMsg(message, receivedText);
+            }
         }
 
     }
@@ -27,6 +34,12 @@ public class RedditPics extends TelegramLongPollingBot {
     public ReplyKeyboardMarkup setKeyboard(){
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+
+        //
+        return replyKeyboardMarkup;
+    }
+
+    public void sendMsg(Message message, String text){
 
     }
 
