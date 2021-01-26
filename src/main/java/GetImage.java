@@ -4,9 +4,17 @@ import java.net.URL;
 
 public class GetImage {
 
-    public static void getRedditPic() throws IOException {
+    public static void getRedditPic(String url) throws IOException {
 
-        URL redditUrl = new  URL("https://www.reddit.com/r/cat/top.json?limit=1");
+        String finalUrl = null;
+
+        if(url != null){
+            finalUrl = "https://www.reddit.com/r/" + url + "top.json?limit=1";
+        } else {
+            finalUrl = "https://www.reddit.com/r/cat/top.json?limit=1";
+        }
+
+        URL redditUrl = new  URL(finalUrl);
         //I need an inputStream object, hence I use the .openStream() method for the URL class
         InputStreamReader inputStream = new InputStreamReader(redditUrl.openStream());
         //bufferedReader works with any inputstream, for example System.in, FileReader and so on
@@ -24,6 +32,14 @@ public class GetImage {
 
         bufferedReader.close();
 
+        jsonFetch(stringBuffer);
+
 
     }
+
+    private static void jsonFetch(StringBuffer stringBuffer){
+
+    }
+
+
 }
