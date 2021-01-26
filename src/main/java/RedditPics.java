@@ -3,6 +3,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 
 public class RedditPics extends TelegramLongPollingBot {
     public String getBotUsername() {
@@ -16,22 +18,21 @@ public class RedditPics extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         Message message;
-        SendMessage sendMessage = new SendMessage();
-
-        ReplyKeyboardMarkup replyKeyboardMarkup = setKeyboard();
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
 
         if(update.hasMessage() && update.getMessage().hasText()){
-            String receivedText = update.getMessage().getText();
-            switch (receivedText.toLowerCase()) {
+            message = update.getMessage();
+            switch (message.getText().toLowerCase()) {
                 case "/start" :
-                    sendMsg(message, receivedText);
+                    sendMsg(message, "Please choose an option:");
+                case "display images" :
+                    sendMsg(message, "What is the Subreddit do you want to receive Pictures from?");
+
             }
         }
 
     }
 
-    public ReplyKeyboardMarkup setKeyboard(){
+    public ReplyKeyboardMarkup setKeyboard(SendMessage sendMessage){
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 
@@ -41,6 +42,16 @@ public class RedditPics extends TelegramLongPollingBot {
 
     public void sendMsg(Message message, String text){
 
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(text);
+
+        try {
+            execute(sendMessage);
+            setKeyboard(sendMessage);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
+        }
     }
 
 }
