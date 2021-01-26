@@ -11,7 +11,7 @@ public class GetImage {
         InputStreamReader inputStream = new InputStreamReader(redditUrl.openStream());
         //bufferedReader works with any inputstream, for example System.in, FileReader and so on
         //it'll then buffer that inputstream
-        BufferedReader bufferedReader = new BufferedReader();
+        BufferedReader bufferedReader = new BufferedReader(inputStream);
         String line;
         StringBuffer stringBuffer = new StringBuffer();
 
