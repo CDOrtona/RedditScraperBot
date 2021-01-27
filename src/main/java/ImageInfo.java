@@ -1,6 +1,6 @@
 import java.net.URL;
 
-public class imageInfo {
+public class ImageInfo {
 
     private URL url;
     private String title;

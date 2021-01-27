@@ -1,3 +1,7 @@
+import com.fasterxml.jackson.annotation.JsonAlias;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,6 +42,13 @@ public class GetImage {
     }
 
     private static void jsonFetch(StringBuffer stringBuffer){
+
+        JSONObject jsonObject = new JSONObject(stringBuffer);
+        JSONObject data = jsonObject.getJSONObject("data");
+        JSONArray children = data.getJSONArray("children");
+        JSONObject data1 = children.getJSONObject(2);
+        
+
 
     }
 
