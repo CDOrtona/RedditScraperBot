@@ -40,11 +40,20 @@ public class RedditPics extends TelegramLongPollingBot {
             message = update.getMessage();
             if(!flagNum && flagSub){
                 choosenSub = message.getText();
+                flagSub = false;
+                switchCase(message);
+
+                //debug
+                System.out.println(choosenSub);
 
             }
             else if(flagNum && !flagSub){
                 numImages = Integer.parseInt(message.getText());
+                flagNum = false;
+                switchCase(message);
 
+                //debug
+                System.out.println(numImages);
             }
 
             else
@@ -138,6 +147,8 @@ public class RedditPics extends TelegramLongPollingBot {
     private void settingKeyboard(Message message){
 
         SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText("Settings:");
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 
