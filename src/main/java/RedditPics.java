@@ -26,12 +26,33 @@ public class RedditPics extends TelegramLongPollingBot {
 
         Message message;
         String choosenSub = null;
+        int numImages;
+        //boolean flagSub = false;
+        //boolean flagNum = false;
 
         if(update.hasMessage() && update.getMessage().hasText()){
+
             message = update.getMessage();
+            if(message.getText().equalsIgnoreCase("/start")){
+                boolean flagNum = false;
+                boolean flagSub = false;
+                switchCase(message, flagSub, flagNum);
+            } else{
+                switchCase(message, flagSub, flagNum);
+            }
+
+
+
+        }
+
+    }
+
+
+    private void switchCase(Message message, boolean flagSub){
+        if(!flagSub){
             switch (message.getText().toLowerCase()) {
                 case "settings" :
-                    chooseSettings(message);
+                    settingKeyboard(message);
                     break;
                 case "show images":
 
@@ -43,6 +64,13 @@ public class RedditPics extends TelegramLongPollingBot {
                     sendMsg(message, "You can use me to get pictures from your favorite subreddit without having" +
                             " to open your Reddit app. :) ");
                     break;
+                case "set subreddit":
+                    sendMsg(message, "Enter the subreddit name:");
+                    flagSub = true;
+                    break;
+                case "number of images":
+                    sendMsg(message, "Enter the number of images to display");
+                    flagNum = true;
                 default:
                     String text = "Hey there,  make sure to" + '\n' +
                             "check the \"Settings\" before using the bot." + '\n' +'\n' +
@@ -61,7 +89,6 @@ public class RedditPics extends TelegramLongPollingBot {
 
             }
         }
-
     }
 
     private void setMainKeyboard(SendMessage sendMessage){
@@ -102,13 +129,32 @@ public class RedditPics extends TelegramLongPollingBot {
 
 
 
-    private void chooseSettings(Message message){
+    private void settingKeyboard(Message message){
 
-        ImageInfo imageInfo = new ImageInfo();
+        SendMessage sendMessage = new SendMessage();
 
-        String subreddit;
-        int numImages;
-        sendMsg(message, "Enter the name of the subreddit you wish to get Pictures from");
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+
+        KeyboardRow firstRow = new KeyboardRow();
+        KeyboardRow secondRow = new KeyboardRow();
+
+        firstRow.add("Set subreddit");
+
+        secondRow.add("Number Of Images");
+
+        ArrayList<KeyboardRow> keyboardList = new ArrayList<KeyboardRow>();
+        keyboardList.add(firstRow);
+        keyboardList.add(secondRow);
+
+        replyKeyboardMarkup.setKeyboard(keyboardList);
+
+        sendMessage.setReplyMarkup(replyKeyboardMarkup);
+
+        try{
+            execute(sendMessage);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
+        }
 
 
     }
