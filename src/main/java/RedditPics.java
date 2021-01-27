@@ -33,7 +33,7 @@ public class RedditPics extends TelegramLongPollingBot {
         String choosenSub = null;
         int numImages = 0;
 
-        ImageInfo imageInfo = new ImageInfo();
+        ImageInfo imageInfo = new ImageInfo(); //implementare assegnazione sub e numeroimaggini all'oggetto
 
         if(update.hasMessage() && update.getMessage().hasText()){
 
