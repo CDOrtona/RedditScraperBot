@@ -1,6 +1,7 @@
 import java.net.URL;
 
 public class ImageInfo {
+    //Delete this line
 
     private URL url;
     private String title;
