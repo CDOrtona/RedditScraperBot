@@ -28,7 +28,8 @@ public class RedditPics extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
-
+//adsfasfasd
+        
         Message message;
         String choosenSub = null;
         int numImages = 0;
