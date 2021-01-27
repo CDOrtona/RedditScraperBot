@@ -8,12 +8,17 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.awt.*;
 import java.io.IOException;
 import java.rmi.MarshalException;
 import java.util.ArrayList;
 
 
 public class RedditPics extends TelegramLongPollingBot {
+
+    private boolean flagSub;
+    private boolean flagNum;
+
     public String getBotUsername() {
         return "RedditDailyPics_bot";
     }
@@ -26,70 +31,71 @@ public class RedditPics extends TelegramLongPollingBot {
 
         Message message;
         String choosenSub = null;
-        int numImages;
-        //boolean flagSub = false;
-        //boolean flagNum = false;
+        int numImages = 0;
+
+        ImageInfo imageInfo = new ImageInfo();
 
         if(update.hasMessage() && update.getMessage().hasText()){
 
             message = update.getMessage();
-            if(message.getText().equalsIgnoreCase("/start")){
-                boolean flagNum = false;
-                boolean flagSub = false;
-                switchCase(message, flagSub, flagNum);
-            } else{
-                switchCase(message, flagSub, flagNum);
+            if(!flagNum && flagSub){
+                choosenSub = message.getText();
+
+            }
+            else if(flagNum && !flagSub){
+                numImages = Integer.parseInt(message.getText());
+
             }
 
-
+            else
+                switchCase(message);
 
         }
 
     }
 
 
-    private void switchCase(Message message, boolean flagSub){
-        if(!flagSub){
-            switch (message.getText().toLowerCase()) {
-                case "settings" :
-                    settingKeyboard(message);
-                    break;
-                case "show images":
+    private void switchCase(Message message){
+        switch (message.getText().toLowerCase()) {
+            case "settings" :
+                settingKeyboard(message);
+                break;
+            case "show images":
 
-                    break;
-                case "contact me" :
-                    sendMsg(message, "If you have any question feel free to contact me here: RedditBot@cdmails.anonaddy.com");
-                    break;
-                case "help":
-                    sendMsg(message, "You can use me to get pictures from your favorite subreddit without having" +
-                            " to open your Reddit app. :) ");
-                    break;
-                case "set subreddit":
-                    sendMsg(message, "Enter the subreddit name:");
-                    flagSub = true;
-                    break;
-                case "number of images":
-                    sendMsg(message, "Enter the number of images to display");
-                    flagNum = true;
-                default:
-                    String text = "Hey there,  make sure to" + '\n' +
-                            "check the \"Settings\" before using the bot." + '\n' +'\n' +
-                            "You'll be able to set your subreddit preference there." ;
+                break;
+            case "contact me" :
+                sendMsg(message, "If you have any question feel free to contact me here: RedditBot@cdmails.anonaddy.com");
+                break;
+            case "help":
+                sendMsg(message, "You can use me to get pictures from your favorite subreddit without having" +
+                        " to open your Reddit app. :) ");
+                break;
+            case "set subreddit":
+                sendMsg(message, "Enter the subreddit name:");
+                flagSub = true;
+                break;
+            case "number of images":
+                sendMsg(message, "Enter the number of images to display");
+                flagNum = true;
+            default:
+                String text = "Hey there,  make sure to" + '\n' +
+                        "check the \"Settings\" before using the bot." + '\n' +'\n' +
+                        "You'll be able to set your subreddit preference there." ;
 
-                    SendMessage sendMessage = new SendMessage();
-                    sendMessage.setChatId(message.getChatId().toString());
-                    sendMessage.setText(text);
-                    setMainKeyboard(sendMessage);
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(message.getChatId().toString());
+                sendMessage.setText(text);
+                setMainKeyboard(sendMessage);
 
-                    try {
-                        execute(sendMessage);
-                    } catch (TelegramApiException e){
-                        e.printStackTrace();
-                    }
+                try {
+                    execute(sendMessage);
+                } catch (TelegramApiException e){
+                    e.printStackTrace();
+                }
 
-            }
         }
     }
+
 
     private void setMainKeyboard(SendMessage sendMessage){
 
