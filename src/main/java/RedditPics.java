@@ -1,23 +1,27 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.GetMe;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.rmi.MarshalException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class RedditPics extends TelegramLongPollingBot {
 
     private boolean flagSub;
     private boolean flagNum;
+    private ImageInfo imageInfo = new ImageInfo();
 
     public String getBotUsername() {
         return "RedditDailyPics_bot";
@@ -29,49 +33,57 @@ public class RedditPics extends TelegramLongPollingBot {
 
     public void onUpdateReceived(Update update) {
 
-
         Message message;
-        String choosenSub = null;
-        int numImages = 0;
-
-        ImageInfo imageInfo = new ImageInfo(); //implementare assegnazione sub e numeroimaggini all'oggetto
 
         if(update.hasMessage() && update.getMessage().hasText()){
 
             message = update.getMessage();
             if(!flagNum && flagSub){
-                choosenSub = message.getText();
+                imageInfo.setSubreddit(message.getText().toLowerCase());
                 flagSub = false;
-                switchCase(message);
+                try {
+                    switchCase(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 //debug
-                System.out.println(choosenSub);
+                System.out.println(message.getText());
 
             }
             else if(flagNum && !flagSub){
-                numImages = Integer.parseInt(message.getText());
+                imageInfo.setNumImgs(message.getText());
                 flagNum = false;
-                switchCase(message);
+                try {
+                    switchCase(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 //debug
-                System.out.println(numImages);
+                System.out.println(message.getText());
             }
 
-            else
-                switchCase(message);
+            else {
+                try {
+                    switchCase(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
         }
 
     }
 
 
-    private void switchCase(Message message){
+    private void switchCase(Message message) throws IOException {
         switch (message.getText().toLowerCase()) {
             case "settings" :
                 settingKeyboard(message);
                 break;
             case "show images":
-
+                showImages(imageInfo, message);
                 break;
             case "contact me" :
                 sendMsg(message, "If you have any question feel free to contact me here: RedditBot@cdmails.anonaddy.com");
@@ -85,8 +97,9 @@ public class RedditPics extends TelegramLongPollingBot {
                 flagSub = true;
                 break;
             case "number of images":
-                sendMsg(message, "Enter the number of images to display");
+                sendMsg(message, "Enter the number of images to display:");
                 flagNum = true;
+                break;
             default:
                 String text = "Hey there,  make sure to" + '\n' +
                         "check the \"Settings\" before using the bot." + '\n' +'\n' +
@@ -177,10 +190,26 @@ public class RedditPics extends TelegramLongPollingBot {
 
     }
 
-    private void showImages(String choosenSub) throws IOException {
+    private void showImages(ImageInfo imageInfo, Message message) throws IOException {
 
-        GetImage.getRedditPic(choosenSub);
+        GetImage.getRedditPic(imageInfo);
         SendPhoto photo = new SendPhoto();
+        photo.setChatId(message.getChatId().toString());
+        photo.setCaption("Author: " + imageInfo.getAuthor() + '\n' +
+                         "Title: " + imageInfo.getTitle() + '\n' +
+                         "Upvotes: " + imageInfo.getUpvotes());
+
+        InputStream inputStream = new URL(imageInfo.getUrl()).openStream();
+        InputFile inputFile = new InputFile().setMedia(inputStream, imageInfo.getTitle());
+        photo.setPhoto(inputFile);
+
+        try{
+            execute(photo);
+        } catch(TelegramApiException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 
