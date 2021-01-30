@@ -1,4 +1,6 @@
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,31 +25,24 @@ public class GetImage {
 
         URL redditUrl = new URL(finalUrl);
         URLConnection urlConnection = redditUrl.openConnection();
-        urlConnection.setRequestProperty("Content-type","application/json; utf-8");
+        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+        urlConnection.connect();
 
-        //InputStreamReader inputStream = new InputStreamReader(redditUrl.openStream());
-
-        //BufferedReader bufferedReader = new BufferedReader(inputStream);
-
-        InputStream inputStream = urlConnection.getInputStream();
-
-        BufferedReader bufferedReader = new BufferedReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader((InputStream)urlConnection.getContent()));
 
         String line;
         StringBuffer stringBuffer = new StringBuffer();
 
-
-        while ((line = bufferedReader.readLine()) != null) {
+        while ((line = bufferedReader.readLine()) != null){
             stringBuffer.append(line);
             //debug
             System.out.println(line);
         }
 
-        inputStream.close();
-        bufferedReader.close();
+        //JsonElement jsonElement = JsonParser.parseString(stringBuffer.toString());
 
-        JSONObject jsonObject = new JSONObject(stringBuffer);
-        JSONObject data = jsonObject.getJSONObject("data");
+        /*JSONObject jsonObject = new JSONObject(stringBuffer);
+        JSONObject data = jsonObject.getJSONObject("listing");
         JSONArray children = data.getJSONArray("children");
         JSONObject data1 = children.getJSONObject(2);
 
@@ -57,7 +52,9 @@ public class GetImage {
         imageInfo.setUpvotes(data1.getInt("score"));
 
         //debug
-        System.out.println(data1.getString("URL"));
+        //System.out.println(data1.getString("URL")); */
+
+
 
 
     }
