@@ -1,11 +1,11 @@
-import com.fasterxml.jackson.annotation.JsonAlias;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -36,10 +36,17 @@ public class GetImage {
         while ((line = bufferedReader.readLine()) != null){
             stringBuffer.append(line);
             //debug
-            System.out.println(line);
+            //System.out.println(line);
         }
 
-        //JsonElement jsonElement = JsonParser.parseString(stringBuffer.toString());
+        JsonElement jsonElement = JsonParser.parseString(stringBuffer.toString());
+
+        if(jsonElement.isJsonObject()){
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            JsonObject data = jsonObject.getAsJsonObject("data");
+            JsonArray children = data.getAsJsonArray("children");
+      
+        }
 
         /*JSONObject jsonObject = new JSONObject(stringBuffer);
         JSONObject data = jsonObject.getJSONObject("listing");
