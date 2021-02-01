@@ -8,7 +8,7 @@ import java.net.URLConnection;
 
 public class GetImage {
 
-    public static <jsonObject> void getRedditPic(ImageInfo imageInfo) throws IOException {
+    public static void getRedditPic(ImageInfo imageInfo) throws IOException {
 
         String finalUrl = null;
         String url = imageInfo.getSubreddit();

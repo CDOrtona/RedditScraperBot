@@ -1,5 +1,3 @@
-import java.net.URL;
-
 public class ImageInfo {
 
     private String url;
