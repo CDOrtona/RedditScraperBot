@@ -15,9 +15,9 @@ public class GetImage {
         int numImgs = imageInfo.getNumImgs();
 
         if (url != null) {
-            finalUrl = "https://www.reddit.com/r/" + url + "/top.json?limit=" + numImgs;
+            finalUrl = "https://www.reddit.com/r/" + url + "/new.json?limit=" + numImgs;
         } else {
-            finalUrl = "https://www.reddit.com/r/cats/top.json?limit=1";
+            finalUrl = "https://www.reddit.com/r/cats/new.json?limit=1";
         }
 
         URL redditUrl = new URL(finalUrl);

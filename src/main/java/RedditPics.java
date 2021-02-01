@@ -4,6 +4,7 @@ import org.telegram.telegrambots.meta.api.methods.GetMe;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -196,19 +197,12 @@ public class RedditPics extends TelegramLongPollingBot {
         GetImage.getRedditPic(imageInfo);
         SendPhoto photo = new SendPhoto();
         photo.setChatId(message.getChatId().toString());
-        photo.setCaption("Author: " + imageInfo.getAuthor() + '\n' +
-                         "Title: " + imageInfo.getTitle() + '\n' +
-                         "Upvotes: " + imageInfo.getUpvotes());
-        URL url = new URL(imageInfo.getUrl().replaceAll("\"", ""));
-        URLConnection urlConnection = url.openConnection();
-        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-        urlConnection.connect();
+        photo.setCaption("Title: " + imageInfo.getTitle() + '\n' +
+                        "u/:" + imageInfo.getAuthor() + '\n' +
+                        "Upvotes: " + imageInfo.getUpvotes());
 
-        InputStream inputStream = urlConnection.getInputStream();
-
-        InputFile inputFile = new InputFile().setMedia(inputStream, imageInfo.getTitle());
+        InputFile inputFile = new InputFile().setMedia(imageInfo.getUrl().replaceAll("\"", ""));
         photo.setPhoto(inputFile);
-
 
         try{
             execute(photo);
