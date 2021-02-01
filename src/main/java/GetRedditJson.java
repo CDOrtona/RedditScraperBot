@@ -3,7 +3,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-class GetImage {
+class GetRedditJson {
 
     static ArrayList<ImageInfo> getRedditPic(ImageInfo imageInfo) throws IOException {
 
@@ -31,8 +31,8 @@ class GetImage {
             stringBuffer.append(line);
         }
 
-        ArrayList<ImageInfo> imageInfoList = JsonRedditParser.parseRedditJson(stringBuffer.toString(), numImgs);
+        return JsonRedditParser.parseRedditJson(stringBuffer.toString(), numImgs);
 
-        return imageInfoList;
+
     }
 }

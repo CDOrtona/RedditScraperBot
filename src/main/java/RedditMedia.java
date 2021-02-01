@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 
 
-public class RedditPics extends TelegramLongPollingBot {
+public class RedditMedia extends TelegramLongPollingBot {
 
     private boolean flagSub;
     private boolean flagNum;
@@ -187,7 +187,7 @@ public class RedditPics extends TelegramLongPollingBot {
 
     private void showImages(ImageInfo imageInfo, Message message) throws IOException {
 
-        ArrayList<ImageInfo> imageInfoList = GetImage.getRedditPic(imageInfo);
+        ArrayList<ImageInfo> imageInfoList = GetRedditJson.getRedditPic(imageInfo);
 
         //debug
         System.out.println("The ArrayList of imageInfo has the following size: " + imageInfoList.size());

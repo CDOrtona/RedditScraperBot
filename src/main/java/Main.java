@@ -8,7 +8,7 @@ public class Main {
 
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            telegramBotsApi.registerBot(new RedditPics());
+            telegramBotsApi.registerBot(new RedditMedia());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
