@@ -5,7 +5,7 @@ public class ImageInfo {
     private String author;
     private String title;
     private int upvotes;
-    private Boolean is_video;
+    private Boolean isVideo;
     private int numImgs;
 
     void setUrl(String url){
@@ -30,6 +30,10 @@ public class ImageInfo {
         this.numImgs = Integer.parseInt(numImgs);
     }
 
+    void setIsVideo(boolean isVideo){
+        this.isVideo = isVideo;
+    }
+
     String getUrl(){
         return this.url;
     }
@@ -50,9 +54,12 @@ public class ImageInfo {
         return this.numImgs;
     }
 
-    int getUpvotes(){
+    int getUpvotes() {
         return this.upvotes;
     }
 
+    boolean getIsVideo(){
+        return isVideo;
+    }
 
 }

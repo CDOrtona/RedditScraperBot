@@ -1,14 +1,11 @@
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
-public class GetImage {
+class GetImage {
 
-    public static void getRedditPic(ImageInfo imageInfo) throws IOException {
+    static ArrayList<ImageInfo> getRedditPic(ImageInfo imageInfo) throws IOException {
 
         String finalUrl = null;
         String url = imageInfo.getSubreddit();
@@ -34,26 +31,8 @@ public class GetImage {
             stringBuffer.append(line);
         }
 
-        //Json tree
-        JsonElement jsonElement = JsonParser.parseString(stringBuffer.toString());
+        ArrayList<ImageInfo> imageInfoList = JsonRedditParser.parseRedditJson(stringBuffer.toString(), numImgs);
 
-        if(jsonElement.isJsonObject()){
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            JsonObject data = jsonObject.getAsJsonObject("data");
-            JsonArray children = data.getAsJsonArray("children");
-            JsonObject childrenObj = children.get(0).getAsJsonObject();
-            JsonObject data1 = childrenObj.getAsJsonObject("data");
-            System.out.println(data1.get("subreddit"));
-
-            imageInfo.setSubreddit(data1.get("subreddit").toString());
-            imageInfo.setUpvotes(data1.get("ups").getAsInt());
-            imageInfo.setAuthor(data1.get("author").toString());
-            imageInfo.setTitle(data1.get("title").toString());
-            imageInfo.setUrl(data1.get("url").toString());
-
-            //print URL of the image retrieved
-            System.out.println(imageInfo.getUrl());
-
-        }
+        return imageInfoList;
     }
 }

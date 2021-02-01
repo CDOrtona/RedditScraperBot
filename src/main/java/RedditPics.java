@@ -187,22 +187,42 @@ public class RedditPics extends TelegramLongPollingBot {
 
     private void showImages(ImageInfo imageInfo, Message message) throws IOException {
 
-        GetImage.getRedditPic(imageInfo);
-        SendPhoto photo = new SendPhoto();
-        photo.setChatId(message.getChatId().toString());
-        photo.setCaption("/r/" + imageInfo.getSubreddit().replaceAll("\"", "") + '\n' + "u/" + imageInfo.getAuthor().replaceAll("\"", "") + '\n' + '\n' +
-                        imageInfo.getTitle().replaceAll("\"", "") + '\n' + '\n' +
-                        imageInfo.getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
+        ArrayList<ImageInfo> imageInfoList = GetImage.getRedditPic(imageInfo);
 
-        InputFile inputFile = new InputFile().setMedia(imageInfo.getUrl().replaceAll("\"", ""));
-        photo.setPhoto(inputFile);
+        //debug
+        System.out.println("The ArrayList of imageInfo has the following size: " + imageInfoList.size());
 
-        try{
-            execute(photo);
-        } catch(TelegramApiException e) {
-            e.printStackTrace();
+        ArrayList<SendPhoto> sendPhotoList = new ArrayList<>();
+
+        for(int i = 0; i < imageInfoList.size(); i++){
+
+
+            if(!imageInfoList.get(i).getIsVideo()){          //checks weather or not the retrieved post is a video, if it is then it's not sent as a message on telegram.
+                                                            //The bot supports only pictures at the moment, support for videos will be added in the near future
+                sendPhotoList.add(new SendPhoto());
+                sendPhotoList.get(i).setChatId(message.getChatId().toString());
+
+                sendPhotoList.get(i).setCaption("/r/" + imageInfoList.get(i).getSubreddit().replaceAll("\"", "") + '\n' + "u/" + imageInfoList.get(i).getAuthor().replaceAll("\"", "") + '\n' + '\n' +
+                        imageInfoList.get(i).getTitle().replaceAll("\"", "") + '\n' + '\n' +
+                        imageInfoList.get(i).getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
+
+
+                InputFile inputFile = new InputFile().setMedia(imageInfoList.get(i).getUrl().replaceAll("\"", ""));
+                sendPhotoList.get(i).setPhoto(inputFile);
+
+                try{
+                    execute(sendPhotoList.get(i));
+                } catch(TelegramApiException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                //debug: returns the url which isn't a picture
+                System.out.println(imageInfoList.get(i).getUrl());
+            }
+
+
         }
-
 
     }
 
