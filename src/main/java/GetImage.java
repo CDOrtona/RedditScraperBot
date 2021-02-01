@@ -2,16 +2,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.JSONObject;
-
-
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 
 public class GetImage {
 
-    public static void getRedditPic(ImageInfo imageInfo) throws IOException {
+    public static <jsonObject> void getRedditPic(ImageInfo imageInfo) throws IOException {
 
         String finalUrl = null;
         String url = imageInfo.getSubreddit();
@@ -35,34 +32,28 @@ public class GetImage {
 
         while ((line = bufferedReader.readLine()) != null){
             stringBuffer.append(line);
-            //debug
-            //System.out.println(line);
         }
 
+        //Json tree
         JsonElement jsonElement = JsonParser.parseString(stringBuffer.toString());
 
         if(jsonElement.isJsonObject()){
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             JsonObject data = jsonObject.getAsJsonObject("data");
             JsonArray children = data.getAsJsonArray("children");
-      
+            JsonObject childrenObj = children.get(0).getAsJsonObject();
+            JsonObject data1 = childrenObj.getAsJsonObject("data");
+            System.out.println(data1.get("subreddit"));
+
+            imageInfo.setSubreddit(data1.get("subreddit").toString());
+            imageInfo.setUpvotes(data1.get("ups").getAsInt());
+            imageInfo.setAuthor(data1.get("author").toString());
+            imageInfo.setTitle(data1.get("title").toString());
+            imageInfo.setUrl(data1.get("url").toString());
+
+            //print URL of the image retrieved
+            System.out.println(imageInfo.getUrl());
+
         }
-
-        /*JSONObject jsonObject = new JSONObject(stringBuffer);
-        JSONObject data = jsonObject.getJSONObject("listing");
-        JSONArray children = data.getJSONArray("children");
-        JSONObject data1 = children.getJSONObject(2);
-
-        imageInfo.setUrl(data1.getString("URL"));
-        imageInfo.setTitle(data1.getString("title"));
-        imageInfo.setAuthor(data1.getString("author"));
-        imageInfo.setUpvotes(data1.getInt("score"));
-
-        //debug
-        //System.out.println(data1.getString("URL")); */
-
-
-
-
     }
 }
