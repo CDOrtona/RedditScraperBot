@@ -1,3 +1,4 @@
+import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.GetMe;
@@ -197,9 +198,9 @@ public class RedditPics extends TelegramLongPollingBot {
         GetImage.getRedditPic(imageInfo);
         SendPhoto photo = new SendPhoto();
         photo.setChatId(message.getChatId().toString());
-        photo.setCaption("Title: " + imageInfo.getTitle() + '\n' +
-                        "u/:" + imageInfo.getAuthor() + '\n' +
-                        "Upvotes: " + imageInfo.getUpvotes());
+        photo.setCaption("/r/" + imageInfo.getSubreddit().replaceAll("\"", "") + '\n' + "u/" + imageInfo.getAuthor().replaceAll("\"", "") + '\n' + '\n' +
+                        imageInfo.getTitle().replaceAll("\"", "") + '\n' + '\n' +
+                        imageInfo.getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
 
         InputFile inputFile = new InputFile().setMedia(imageInfo.getUrl().replaceAll("\"", ""));
         photo.setPhoto(inputFile);
