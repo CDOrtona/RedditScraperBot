@@ -2,6 +2,7 @@ import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -16,7 +17,7 @@ public class RedditMedia extends TelegramLongPollingBot {
 
     private boolean flagSub;
     private boolean flagNum;
-    private ImageInfo imageInfo = new ImageInfo();
+    private MediaInfo mediaInfo = new MediaInfo();
 
     public String getBotUsername() {
         return "RedditDailyPics_bot";
@@ -34,7 +35,7 @@ public class RedditMedia extends TelegramLongPollingBot {
 
             message = update.getMessage();
             if(!flagNum && flagSub){
-                imageInfo.setSubreddit(message.getText().toLowerCase());
+                mediaInfo.setSubreddit(message.getText().toLowerCase());
                 flagSub = false;
                 try {
                     switchCase(message);
@@ -47,8 +48,21 @@ public class RedditMedia extends TelegramLongPollingBot {
 
             }
             else if(flagNum && !flagSub){
-                imageInfo.setNumImgs(message.getText());
+                mediaInfo.setNumImgs(message.getText());
                 flagNum = false;
+                try {
+                    switchCase(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                //debug
+                System.out.println(message.getText());
+            }
+
+            else if(flagNum && flagSub){
+                flagNum = false;
+                flagSub = false;
                 try {
                     switchCase(message);
                 } catch (IOException e) {
@@ -74,18 +88,23 @@ public class RedditMedia extends TelegramLongPollingBot {
 
     private void switchCase(Message message) throws IOException {
         switch (message.getText().toLowerCase()) {
-            case "settings" :
-                settingKeyboard(message);
+            case "/start":
+                String text = EmojiParser.parseToUnicode("Hey there :sunglasses:");
+                lunchKeyboard(message, text);
+                break;
+            case "/help":
+                sendMsg(message, "You can use me to get pictures from your favorite subreddit without having" +
+                        " to open your Reddit app. :) ");
+                break;
+            case "media scraping" :
+                mediaKeyboard(message);
                 break;
             case "show images":
-                showImages(imageInfo, message);
+                showImages(mediaInfo, message);
+                lunchKeyboard(message, EmojiParser.parseToUnicode(":point_down: Choose an option :point_down:"));
                 break;
             case "contact me" :
                 sendMsg(message, "If you have any question feel free to contact me here: RedditBot@cdmails.anonaddy.com");
-                break;
-            case "help":
-                sendMsg(message, "You can use me to get pictures from your favorite subreddit without having" +
-                        " to open your Reddit app. :) ");
                 break;
             case "set subreddit":
                 sendMsg(message, "Enter the subreddit name:");
@@ -95,22 +114,19 @@ public class RedditMedia extends TelegramLongPollingBot {
                 sendMsg(message, "Enter the number of images to display:");
                 flagNum = true;
                 break;
-            default:
-                String text = "Hey there,  make sure to" + '\n' +
-                        "check the \"Settings\" before using the bot." + '\n' +'\n' +
-                        "You'll be able to set your subreddit preference there." ;
+        }
+    }
 
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(message.getChatId().toString());
-                sendMessage.setText(text);
-                setMainKeyboard(sendMessage);
+    private void lunchKeyboard(Message message, String text){
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(text);
+        setMainKeyboard(sendMessage);
 
-                try {
-                    execute(sendMessage);
-                } catch (TelegramApiException e){
-                    e.printStackTrace();
-                }
-
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
         }
     }
 
@@ -122,13 +138,12 @@ public class RedditMedia extends TelegramLongPollingBot {
         KeyboardRow firstRow = new KeyboardRow();
         KeyboardRow secondRow = new KeyboardRow();
 
-        firstRow.add("Show Images");
-        firstRow.add("Settings");
+        firstRow.add("Media Scraping");
+        firstRow.add("Download video");
 
         secondRow.add("Contact me");
-        secondRow.add("Help");
 
-        ArrayList<KeyboardRow> keyboardList = new ArrayList<KeyboardRow>();
+        ArrayList<KeyboardRow> keyboardList = new ArrayList<>();
         keyboardList.add(firstRow);
         keyboardList.add(secondRow);
 
@@ -153,24 +168,31 @@ public class RedditMedia extends TelegramLongPollingBot {
 
 
 
-    private void settingKeyboard(Message message){
+    private void mediaKeyboard(Message message){
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText("Settings:");
+        sendMessage.setText(EmojiParser.parseToUnicode(":black_small_square: Choose the Subreddit you want to scrape picures/videos from" + '\n'+
+                                                            ":black_small_square: Choose the number of pictures/videos (100 max)" + '\n' + '\n' +
+                                                            "Note that you'll not only be able to gather pictures and videos posted on the Subreddit " +
+                                                            "you set above, but also posts."));
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 
         KeyboardRow firstRow = new KeyboardRow();
         KeyboardRow secondRow = new KeyboardRow();
+        KeyboardRow thirdRow = new KeyboardRow();
 
-        firstRow.add("Set subreddit");
+        firstRow.add("Set Subreddit");
 
         secondRow.add("Number Of Images");
 
-        ArrayList<KeyboardRow> keyboardList = new ArrayList<KeyboardRow>();
+        thirdRow.add("Show Images");
+
+        ArrayList<KeyboardRow> keyboardList = new ArrayList<>();
         keyboardList.add(firstRow);
         keyboardList.add(secondRow);
+        keyboardList.add(thirdRow);
 
         replyKeyboardMarkup.setKeyboard(keyboardList);
 
@@ -180,52 +202,71 @@ public class RedditMedia extends TelegramLongPollingBot {
             execute(sendMessage);
         } catch (TelegramApiException e){
             e.printStackTrace();
+
         }
-
-
     }
 
-    private void showImages(ImageInfo imageInfo, Message message) throws IOException {
+    private void showImages(MediaInfo mediaInfo, Message message) throws IOException {
 
-        ArrayList<ImageInfo> imageInfoList = GetRedditJson.getRedditPic(imageInfo);
+        ArrayList<MediaInfo> mediaInfoList = GetRedditJson.getRedditPic(mediaInfo);
 
-        //debug
-        System.out.println("The ArrayList of imageInfo has the following size: " + imageInfoList.size());
+        if(mediaInfoList != null){
 
-        ArrayList<SendPhoto> sendPhotoList = new ArrayList<>();
+            System.out.println("The ArrayList of imageInfo has the following size: " + mediaInfoList.size());
 
-        for(int i = 0; i < imageInfoList.size(); i++){
+            ArrayList<SendPhoto> sendPhotoList = new ArrayList<>();
+            ArrayList<SendVideo> sendVideoList = new ArrayList<>();
+
+            for(int i = 0; i < mediaInfoList.size(); i++){
+
+                if(!mediaInfoList.get(i).hasVideo()){          //checks weather or not the retrieved post is a video
+
+                    sendPhotoList.add(new SendPhoto());
+                    sendPhotoList.get(i).setChatId(message.getChatId().toString());
+
+                    sendPhotoList.get(i).setCaption("/r/" + mediaInfoList.get(i).getSubreddit().replaceAll("\"", "") + '\n' + "u/" + mediaInfoList.get(i).getAuthor().replaceAll("\"", "") + '\n' + '\n' +
+                            mediaInfoList.get(i).getTitle().replaceAll("\"", "") + '\n' + '\n' +
+                            mediaInfoList.get(i).getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
 
 
-            if(!imageInfoList.get(i).getIsVideo()){          //checks weather or not the retrieved post is a video, if it is then it's not sent as a message on telegram.
-                                                            //The bot supports only pictures at the moment, support for videos will be added in the near future
-                sendPhotoList.add(new SendPhoto());
-                sendPhotoList.get(i).setChatId(message.getChatId().toString());
+                    InputFile inputFile = new InputFile().setMedia(mediaInfoList.get(i).getUrl().replaceAll("\"", ""));
+                    sendPhotoList.get(i).setPhoto(inputFile);
 
-                sendPhotoList.get(i).setCaption("/r/" + imageInfoList.get(i).getSubreddit().replaceAll("\"", "") + '\n' + "u/" + imageInfoList.get(i).getAuthor().replaceAll("\"", "") + '\n' + '\n' +
-                        imageInfoList.get(i).getTitle().replaceAll("\"", "") + '\n' + '\n' +
-                        imageInfoList.get(i).getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
+                    try{
+                        execute(sendPhotoList.get(i));
+                    } catch(TelegramApiException e) {
+                        e.printStackTrace();
+                        lunchKeyboard(message, EmojiParser.parseToUnicode(":warning: Couldn't retrieve this post"));
+                    }
 
+                } else if(mediaInfoList.get(i).hasVideo()) {
 
-                InputFile inputFile = new InputFile().setMedia(imageInfoList.get(i).getUrl().replaceAll("\"", ""));
-                sendPhotoList.get(i).setPhoto(inputFile);
+                    sendVideoList.add(new SendVideo());
 
-                try{
-                    execute(sendPhotoList.get(i));
-                } catch(TelegramApiException e) {
-                    e.printStackTrace();
+                    sendVideoList.get(i).setChatId(message.getChatId().toString());
+                    sendVideoList.get(i).setCaption("/r/" + mediaInfoList.get(i).getSubreddit().replaceAll("\"", "") + '\n' + "u/" + mediaInfoList.get(i).getAuthor().replaceAll("\"", "") + '\n' + '\n' +
+                            mediaInfoList.get(i).getTitle().replaceAll("\"", "") + '\n' + '\n' +
+                            mediaInfoList.get(i).getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
+
+                    InputFile inputFile = new InputFile().setMedia(mediaInfoList.get(i).getUrl().replaceAll("\n", ""));
+                    sendVideoList.get(i).setVideo(inputFile);
+
+                    try {
+                        execute(sendVideoList.get(i));
+                    } catch(TelegramApiException e){
+                        e.printStackTrace();
+                        lunchKeyboard(message, EmojiParser.parseToUnicode(":warning: Couldn't retrieve this post"));
+                    }
+
                 }
 
-            } else {
-                //debug: returns the url which isn't a picture
-                System.out.println(imageInfoList.get(i).getUrl());
             }
+        }
 
-
+        else {
+            sendMsg(message, EmojiParser.parseToUnicode(":warning: invalid subreddit").toUpperCase());
         }
 
     }
-
-
 
 }

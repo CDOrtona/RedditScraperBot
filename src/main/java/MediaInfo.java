@@ -1,4 +1,4 @@
-public class ImageInfo {
+class MediaInfo {
 
     private String url;
     private String subreddit;
@@ -30,9 +30,10 @@ public class ImageInfo {
         this.numImgs = Integer.parseInt(numImgs);
     }
 
-    void setIsVideo(boolean isVideo){
+    void setIsVideo(Boolean isVideo){
         this.isVideo = isVideo;
     }
+
 
     String getUrl(){
         return this.url;
@@ -58,8 +59,8 @@ public class ImageInfo {
         return this.upvotes;
     }
 
-    boolean getIsVideo(){
-        return isVideo;
+    Boolean hasVideo(){
+        return this.isVideo;
     }
 
 }

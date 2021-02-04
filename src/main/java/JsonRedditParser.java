@@ -4,42 +4,51 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
-public class JsonRedditParser {
+class JsonRedditParser {
 
-    static ArrayList<ImageInfo> parseRedditJson(String url, int numImgs) {
+    static ArrayList<MediaInfo> parseRedditJson(String jsonData, int numImgs) {
 
-        ArrayList<ImageInfo> imageInfoList = new ArrayList<>();
+        ArrayList<MediaInfo> mediaInfoList = new ArrayList<>();
 
         //Json tree
-        JsonElement jsonElement = com.google.gson.JsonParser.parseString(url);
+        JsonElement jsonElement = com.google.gson.JsonParser.parseString(jsonData);
 
         if (jsonElement.isJsonObject()) {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             JsonObject data = jsonObject.getAsJsonObject("data");
-            JsonArray children = data.getAsJsonArray("children");
+            int subAvailable = data.get("dist").getAsInt();
 
-            for (int i = 0; i < numImgs; i++) {
+            if (subAvailable != 0) {
 
-                imageInfoList.add(new ImageInfo());
+                JsonArray children = data.getAsJsonArray("children");
 
-                JsonObject childrenObj = children.get(i).getAsJsonObject();
-                JsonObject data1 = childrenObj.getAsJsonObject("data");
+                for (int i = 0; i < numImgs; i++) {
 
-                imageInfoList.get(i).setSubreddit(data1.get("subreddit").toString());
-                imageInfoList.get(i).setUpvotes(data1.get("ups").getAsInt());
-                imageInfoList.get(i).setAuthor(data1.get("author").toString());
-                imageInfoList.get(i).setTitle(data1.get("title").toString());
-                imageInfoList.get(i).setUrl(data1.get("url").toString());
-                imageInfoList.get(i).setIsVideo(data1.get("is_video").getAsBoolean());
+                    mediaInfoList.add(new MediaInfo());
 
-                //print URL of the image retrieved
-                System.out.println(imageInfoList.get(i).getUrl());
+                    JsonObject childrenObj = children.get(i).getAsJsonObject();
+                    JsonObject data1 = childrenObj.getAsJsonObject("data");
+
+                    mediaInfoList.get(i).setSubreddit(data1.get("subreddit").toString());
+                    mediaInfoList.get(i).setUpvotes(data1.get("ups").getAsInt());
+                    mediaInfoList.get(i).setAuthor(data1.get("author").toString());
+                    mediaInfoList.get(i).setTitle(data1.get("title").toString());
+                    mediaInfoList.get(i).setUrl(data1.get("url").toString());
+                    mediaInfoList.get(i).setIsVideo(data1.get("is_video").getAsBoolean());
+
+
+                    //print URL of the image retrieved
+                    System.out.println(mediaInfoList.get(i).getUrl());
+                    //this prints whether the media is a video or not
+                    System.out.println("The media is a video? " + mediaInfoList.get(i).hasVideo());
+                }
             }
-
-
+            else {
+                return null;
+            }
         }
 
-        return imageInfoList;
+        return mediaInfoList;
     }
 
 }

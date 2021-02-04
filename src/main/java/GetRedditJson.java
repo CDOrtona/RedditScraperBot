@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 class GetRedditJson {
 
-    static ArrayList<ImageInfo> getRedditPic(ImageInfo imageInfo) throws IOException {
+    static ArrayList<MediaInfo> getRedditPic(MediaInfo mediaInfo) throws IOException {
 
-        String finalUrl = null;
-        String url = imageInfo.getSubreddit();
-        int numImgs = imageInfo.getNumImgs();
+        String finalUrl;
+        String url = mediaInfo.getSubreddit();
+        int numImgs = mediaInfo.getNumImgs();
 
         if (url != null) {
             finalUrl = "https://www.reddit.com/r/" + url + "/new.json?limit=" + numImgs;
