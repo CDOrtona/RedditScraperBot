@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
+import static com.google.gson.JsonParser.parseString;
+
 class JsonRedditParser {
 
     static ArrayList<MediaInfo> parseRedditJson(String jsonData, int numImgs) {
@@ -11,11 +13,12 @@ class JsonRedditParser {
         ArrayList<MediaInfo> mediaInfoList = new ArrayList<>();
 
         //Json tree
-        JsonElement jsonElement = com.google.gson.JsonParser.parseString(jsonData);
+        JsonElement jsonElement = parseString(jsonData);
 
         if (jsonElement.isJsonObject()) {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             JsonObject data = jsonObject.getAsJsonObject("data");
+            //this checks whether the sub defined by the user is correct or not
             int subAvailable = data.get("dist").getAsInt();
 
             if (subAvailable != 0) {
@@ -35,7 +38,6 @@ class JsonRedditParser {
                     mediaInfoList.get(i).setTitle(data1.get("title").toString());
                     mediaInfoList.get(i).setUrl(data1.get("url").toString());
                     mediaInfoList.get(i).setIsVideo(data1.get("is_video").getAsBoolean());
-
 
                     //print URL of the image retrieved
                     System.out.println(mediaInfoList.get(i).getUrl());

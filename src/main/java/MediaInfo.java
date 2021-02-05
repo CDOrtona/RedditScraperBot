@@ -34,7 +34,6 @@ class MediaInfo {
         this.isVideo = isVideo;
     }
 
-
     String getUrl(){
         return this.url;
     }

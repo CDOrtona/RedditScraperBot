@@ -2,7 +2,6 @@ import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -24,7 +23,7 @@ public class RedditMedia extends TelegramLongPollingBot {
     }
 
     public String getBotToken() {
-        return "1557782545:AAH-ron27SSMo4PWS9zUgXCOUHuAxb5e8KE";
+        return "1557782545:AAH8mx0WiWxfMDEcNltTZXrjwm5mAxBZKlg";
     }
 
     public void onUpdateReceived(Update update) {
@@ -96,10 +95,13 @@ public class RedditMedia extends TelegramLongPollingBot {
                 sendMsg(message, "You can use me to get pictures from your favorite subreddit without having" +
                         " to open your Reddit app. :) ");
                 break;
+            case "/back":
+                lunchKeyboard(message, EmojiParser.parseToUnicode(":point_down: Choose an option :point_down:"));
+                break;
             case "media scraping" :
                 mediaKeyboard(message);
                 break;
-            case "show images":
+            case "show medias":
                 showImages(mediaInfo, message);
                 lunchKeyboard(message, EmojiParser.parseToUnicode(":point_down: Choose an option :point_down:"));
                 break;
@@ -110,8 +112,8 @@ public class RedditMedia extends TelegramLongPollingBot {
                 sendMsg(message, "Enter the subreddit name:");
                 flagSub = true;
                 break;
-            case "number of images":
-                sendMsg(message, "Enter the number of images to display:");
+            case "set number of medias":
+                sendMsg(message, "Enter the number of medias to display:");
                 flagNum = true;
                 break;
         }
@@ -139,7 +141,7 @@ public class RedditMedia extends TelegramLongPollingBot {
         KeyboardRow secondRow = new KeyboardRow();
 
         firstRow.add("Media Scraping");
-        firstRow.add("Download video");
+        firstRow.add("Users Scraping");
 
         secondRow.add("Contact me");
 
@@ -185,9 +187,9 @@ public class RedditMedia extends TelegramLongPollingBot {
 
         firstRow.add("Set Subreddit");
 
-        secondRow.add("Number Of Images");
+        secondRow.add("Set number of medias");
 
-        thirdRow.add("Show Images");
+        thirdRow.add("Show Medias");
 
         ArrayList<KeyboardRow> keyboardList = new ArrayList<>();
         keyboardList.add(firstRow);
@@ -215,49 +217,34 @@ public class RedditMedia extends TelegramLongPollingBot {
             System.out.println("The ArrayList of imageInfo has the following size: " + mediaInfoList.size());
 
             ArrayList<SendPhoto> sendPhotoList = new ArrayList<>();
-            ArrayList<SendVideo> sendVideoList = new ArrayList<>();
 
             for(int i = 0; i < mediaInfoList.size(); i++){
 
-                if(!mediaInfoList.get(i).hasVideo()){          //checks weather or not the retrieved post is a video
+                if(!mediaInfoList.get(i).hasVideo()) {          //checks weather or not the retrieved post is a video
 
                     sendPhotoList.add(new SendPhoto());
                     sendPhotoList.get(i).setChatId(message.getChatId().toString());
 
-                    sendPhotoList.get(i).setCaption("/r/" + mediaInfoList.get(i).getSubreddit().replaceAll("\"", "") + '\n' + "u/" + mediaInfoList.get(i).getAuthor().replaceAll("\"", "") + '\n' + '\n' +
+                    sendPhotoList.get(i).setCaption(mediaInfoList.get(i).getUrl().replaceAll("\"", "") + '\n' + '\n' +
+                            "r/" + mediaInfoList.get(i).getSubreddit().replaceAll("\"", "") + '\n' +
+                            "u/" + mediaInfoList.get(i).getAuthor().replaceAll("\"", "") + '\n' + '\n' +
                             mediaInfoList.get(i).getTitle().replaceAll("\"", "") + '\n' + '\n' +
-                            mediaInfoList.get(i).getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
+                            mediaInfoList.get(i).getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:"));
 
 
                     InputFile inputFile = new InputFile().setMedia(mediaInfoList.get(i).getUrl().replaceAll("\"", ""));
                     sendPhotoList.get(i).setPhoto(inputFile);
 
-                    try{
-                        execute(sendPhotoList.get(i));
-                    } catch(TelegramApiException e) {
-                        e.printStackTrace();
-                        lunchKeyboard(message, EmojiParser.parseToUnicode(":warning: Couldn't retrieve this post"));
-                    }
-
-                } else if(mediaInfoList.get(i).hasVideo()) {
-
-                    sendVideoList.add(new SendVideo());
-
-                    sendVideoList.get(i).setChatId(message.getChatId().toString());
-                    sendVideoList.get(i).setCaption("/r/" + mediaInfoList.get(i).getSubreddit().replaceAll("\"", "") + '\n' + "u/" + mediaInfoList.get(i).getAuthor().replaceAll("\"", "") + '\n' + '\n' +
-                            mediaInfoList.get(i).getTitle().replaceAll("\"", "") + '\n' + '\n' +
-                            mediaInfoList.get(i).getUpvotes() + "  " + EmojiParser.parseToUnicode(":thumbsup:") );
-
-                    InputFile inputFile = new InputFile().setMedia(mediaInfoList.get(i).getUrl().replaceAll("\n", ""));
-                    sendVideoList.get(i).setVideo(inputFile);
-
                     try {
-                        execute(sendVideoList.get(i));
-                    } catch(TelegramApiException e){
+                        execute(sendPhotoList.get(i));
+                    } catch (TelegramApiException e) {
                         e.printStackTrace();
-                        lunchKeyboard(message, EmojiParser.parseToUnicode(":warning: Couldn't retrieve this post"));
+                        lunchKeyboard(message, EmojiParser.parseToUnicode(":warning: I couldn't retrieve this post"));
                     }
+                }
 
+                else if(mediaInfoList.get(i).hasVideo()) {
+                    System.out.println("unsupported format");
                 }
 
             }
