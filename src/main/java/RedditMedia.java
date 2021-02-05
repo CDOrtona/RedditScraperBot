@@ -11,8 +11,10 @@ import java.io.*;
 import java.util.ArrayList;
 
 
-
 public class RedditMedia extends TelegramLongPollingBot {
+
+    //environmental variable
+    private String BOT_TOKEN = System.getenv("BOT_TOKEN");
 
     private boolean flagSub;
     private boolean flagNum;
@@ -23,7 +25,7 @@ public class RedditMedia extends TelegramLongPollingBot {
     }
 
     public String getBotToken() {
-        return "1557782545:AAH8mx0WiWxfMDEcNltTZXrjwm5mAxBZKlg";
+        return BOT_TOKEN;
     }
 
     public void onUpdateReceived(Update update) {
