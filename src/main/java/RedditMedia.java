@@ -1,5 +1,7 @@
 import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.*;
@@ -11,7 +13,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 
-public class RedditMedia extends TelegramLongPollingBot {
+public class RedditMedia extends TelegramWebhookBot {
 
     //environmental variable
     private String BOT_TOKEN = System.getenv("BOT_TOKEN");
@@ -28,7 +30,12 @@ public class RedditMedia extends TelegramLongPollingBot {
         return BOT_TOKEN;
     }
 
-    public void onUpdateReceived(Update update) {
+    @Override
+    public String getBotPath() {
+        return "\"https://\"telegramredditbot.herokuapp.com/";
+    }
+
+    public BotApiMethod onWebhookUpdateReceived(Update update){
 
         Message message;
 
@@ -84,7 +91,10 @@ public class RedditMedia extends TelegramLongPollingBot {
 
         }
 
+        return null;
     }
+
+
 
 
     private void switchCase(Message message) throws IOException {

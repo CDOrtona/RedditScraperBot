@@ -1,4 +1,5 @@
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
@@ -8,7 +9,7 @@ public class Main {
 
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            telegramBotsApi.registerBot(new RedditMedia());
+            telegramBotsApi.registerBot(new RedditMedia(), SetWebhook.builder().url("\"https://\"telegramredditbot.herokuapp.com/").build());
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
