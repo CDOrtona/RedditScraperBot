@@ -4,12 +4,15 @@ by parsing JSON data.
 
 ## Usage
 
-![how to]()
+![how to](https://github.com/CDOrtona/RedditToTelegram/blob/master/files/IMG_8130.gif)
 
-##Dependencies
+## Dependencies
 Telegram bot Java API: [TelegramBots](https://github.com/rubenlagus/TelegramBotshttps://github.com/rubenlagus/TelegramBots)
+
 JSON to JAVA: [gson](https://github.com/google/gson)
+
 EMOJI parser: [emoji-java](https://github.com/vdurmont/emoji-java)
+
  
 
 
