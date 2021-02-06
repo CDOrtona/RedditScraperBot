@@ -4,7 +4,11 @@ by parsing JSON data.
 
 ## Usage
 
-![how to](https://github.com/CDOrtona/RedditToTelegram/blob/master/files/IMG_8130.gif)
+<a href=url>
+ <img src="https://github.com/CDOrtona/RedditToTelegram/blob/master/files/photo_2021-02-06_22-34-12.jpg" alight="left" width="310" height="640" >
+ <img src="https://github.com/CDOrtona/RedditToTelegram/blob/master/files/photo_2021-02-06_22-34-14.jpg" width="310" height="640">
+ <img src="https://github.com/CDOrtona/RedditToTelegram/blob/master/files/photo_2021-02-06_22-34-16.jpg" aligh="right" width="310" height="640">
+</a>
 
 ## Dependencies
 Telegram bot Java API: [TelegramBots](https://github.com/rubenlagus/TelegramBotshttps://github.com/rubenlagus/TelegramBots)
