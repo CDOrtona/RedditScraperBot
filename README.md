@@ -11,7 +11,7 @@ by parsing JSON data.
 </a>
 
 ## Future Releases
-I'll add eventually the possibility to scrape through users' posts and comments published.
+I'll add eventually the possibility to scrape through users' published posts and comments.
 
 ## Dependencies
 Telegram bot Java API: [TelegramBots](https://github.com/rubenlagus/TelegramBot)
