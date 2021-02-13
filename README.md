@@ -10,8 +10,11 @@ by parsing JSON data.
  <img src="https://github.com/CDOrtona/RedditToTelegram/blob/master/files/photo_2021-02-06_22-34-16.jpg" aligh="right" width="310" height="640">
 </a>
 
+## Future Releases
+I'll add eventually the possibility to scrape through users' posts and comments published.
+
 ## Dependencies
-Telegram bot Java API: [TelegramBots](https://github.com/rubenlagus/TelegramBotshttps://github.com/rubenlagus/TelegramBots)
+Telegram bot Java API: [TelegramBots](https://github.com/rubenlagus/TelegramBot)
 
 JSON to JAVA: [gson](https://github.com/google/gson)
 
