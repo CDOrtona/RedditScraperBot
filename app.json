@@ -1,0 +1,27 @@
+{
+  "name": "reddit send pics bot",
+  "description": "A barebones Telegram bot using java",
+  "repository": "",
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg",
+  "keywords": [
+    "java",
+    "telegram-bot",
+    "example"
+  ],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "env": {
+    "BOT_TOKEN": {
+      "description": "The bot name from BotFather",
+      "value": "1663530443:AAFY2NSkXve75fmuyLBBwl5u-P1YFS9EIxE"
+    },
+    "EMAIL_TOKEN": {
+      "description": "The bot name from BotFather",
+      "value": "redditBot@cdmails.anonaddy.com"
+    }
+  }
+}
