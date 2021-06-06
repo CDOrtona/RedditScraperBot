@@ -25,7 +25,7 @@ public class RedditMedia extends TelegramLongPollingBot {
     }
 
     public String getBotToken() {
-        return BOT_TOKEN;
+        return "1663530443:AAFY2NSkXve75fmuyLBBwl5u-P1YFS9EIxE";
     }
 
     public void onUpdateReceived(Update update) {
